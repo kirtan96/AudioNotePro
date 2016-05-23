@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.NoteFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/relativeLayout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="#aafbf2">
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/close"
+            android:layout_alignParentTop="true"
+            android:id="@+id/input"
+            android:background="#fff"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toLeftOf="@+id/close"
+            android:layout_marginRight="10dp" />
+
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@mipmap/correct"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/ok"
+            android:layout_above="@+id/close"
+            android:layout_marginRight="5dp"
+            android:layout_toRightOf="@+id/input"
+            android:layout_toEndOf="@+id/input"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="2dp"
+            android:backgroundTintMode="multiply"
+            android:backgroundTint="#d1f0a8" />
+
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/close"
+            android:background="@android:drawable/ic_delete"
+            android:backgroundTint="#ff0000"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
