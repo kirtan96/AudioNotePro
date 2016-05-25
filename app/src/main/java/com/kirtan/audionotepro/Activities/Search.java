@@ -8,10 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,10 +29,12 @@ import java.util.Map;
  */
 public class Search extends AppCompatActivity {
     ListView listView;
-    ArrayList<String> key;
+    ArrayList<String> key, ylist, nlist;
     String search;
     String file = "";
     TextView nrf;
+    FileAdapter adp;
+    SharedPreferences myPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +44,7 @@ public class Search extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
+        myPrefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
         listView = (ListView) findViewById(R.id.listView);
         nrf = (TextView) findViewById(R.id.no_result);
         nrf.setVisibility(View.INVISIBLE);
@@ -61,7 +64,8 @@ public class Search extends AppCompatActivity {
                     if(!search.isEmpty()) {
                         getSupportActionBar().setTitle(search);
                         key = new ArrayList<>();
-                        SharedPreferences myPrefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        nlist = new ArrayList<>();
+                        ylist = new ArrayList<>();
                         Map<String, ?> keys = myPrefs.getAll();
                         for (Map.Entry<String, ?> entryKey : keys.entrySet()) {
                             if ((!entryKey.getKey().contains("myYouTubeURLS")) &&
@@ -76,22 +80,34 @@ public class Search extends AppCompatActivity {
                                         ((!entryKey.getKey().toString().equals("myFiles") &&
                                                 (entryKey.getKey().toString().toLowerCase().contains(search.toLowerCase())))))
                                 {
-                                    key.add(entryKey.getKey());
+                                    nlist.add(entryKey.getKey());
+                                }
+                            }
+                            else if ((!entryKey.getKey().equals("myYouTubeFiles") && entryKey.getKey().contains("myYouTubeFiles")))
+                            {
+                                if(entryKey.getKey().toLowerCase().contains(search.toLowerCase()) ||
+                                        myPrefs.getString(entryKey.getValue().toString(), "").toLowerCase().contains(search.toLowerCase()))
+                                {
+                                    ylist.add(entryKey.getKey().replace("myYouTubeFiles",""));
                                 }
                             }
                         }
+                        Collections.sort((List)nlist);
+                        Collections.sort((List)ylist);
+                        key.addAll(nlist);
+                        key.addAll(ylist);
                         if(key.isEmpty())
                         {
                             nrf.setVisibility(View.VISIBLE);
+                            adp = new FileAdapter(key);
+                            listView.setAdapter(adp);
                         }
                         else
                         {
                             nrf.setVisibility(View.INVISIBLE);
+                            adp = new FileAdapter(key);
+                            listView.setAdapter(adp);
                         }
-                        Collections.sort((List)key);
-                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(Search.this,
-                                android.R.layout.simple_list_item_1, key);
-                        listView.setAdapter(arrayAdapter);
                     }
                 }
 
@@ -103,12 +119,87 @@ public class Search extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 file = listView.getItemAtPosition(position).toString();
-                Intent intent = new Intent(Search.this, SearchResult.class);
-                intent.putExtra("file", file);
-                intent.putExtra("search", search);
-                startActivity(intent);
+                if(position < nlist.size()) {
+                    Intent intent = new Intent(Search.this, SearchResult.class);
+                    intent.putExtra("file", file);
+                    intent.putExtra("search", search);
+                    startActivity(intent);
+                }
+                else{
+                    Intent intent = new Intent(Search.this, YoutubeResult.class);
+                    intent.putExtra("Search", search);
+                    intent.putExtra("File", file);
+                    intent.putExtra("VideoID", myPrefs.getString(file+"myYouTubeFiles",""));
+                    startActivity(intent);
+                }
             }
         });
+
+    }
+
+    /**
+     * Private Class for listView
+     */
+    private class FileAdapter extends BaseAdapter
+    {
+
+        ArrayList<String> s;
+        protected FileAdapter(ArrayList<String> s1)
+        {
+            s = s1;
+        }
+        /**
+         * gets the size of conversatrion list
+         * @return size of conversation list
+         */
+        @Override
+        public int getCount()
+        {
+            return s.size();
+        }
+
+        /**
+         * gets the selected conversation
+         * @param arg0 the position on the list
+         * @return the conversation at a selected position
+         */
+        @Override
+        public String getItem(int arg0)
+        {
+            return s.get(arg0);
+        }
+
+        /**
+         * gets the id for a selected positon
+         * @param arg0 the position on the list
+         * @return the id for the position
+         */
+        @Override
+        public long getItemId(int arg0)
+        {
+            return arg0;
+        }
+
+        /**
+         * gets the layout for a conversation
+         * @param pos the psoition of the conversation
+         * @param v the view for how the conversation is laid out
+         * @param arg2 the view group
+         * @return the overall layout of a conversation
+         */
+        @Override
+        public View getView(int pos, View v, ViewGroup arg2)
+        {
+            if (pos < nlist.size())
+                v = getLayoutInflater().inflate(R.layout.file_list, null);
+            else
+                v = getLayoutInflater().inflate(R.layout.youtube_list, null);
+
+            TextView lbl = (TextView) v.findViewById(R.id.note);
+            lbl.setText(s.get(pos));
+
+            return v;
+        }
 
     }
 

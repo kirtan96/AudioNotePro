@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
                 Manifest.permission.INTERNET);
 
         if (writeCheck != PackageManager.PERMISSION_GRANTED) {
-
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     1);
@@ -954,25 +953,47 @@ public class MainActivity extends AppCompatActivity {
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 1: {
-                if (readCheck != PackageManager.PERMISSION_GRANTED) {
-
+                if(writeCheck != PackageManager.PERMISSION_GRANTED)
+                {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            1);
+                }
+                else if (readCheck != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(this,
                             new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                             2);
                 }
             }
             case 2: {
-                if (recordCheck != PackageManager.PERMISSION_GRANTED) {
-
+                if(readCheck != PackageManager.PERMISSION_GRANTED)
+                {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                            2);
+                }
+                else if (recordCheck != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(this,
                             new String[]{Manifest.permission.RECORD_AUDIO},
                             3);
                 }
             }
             case 3: {
-
+                if(recordCheck != PackageManager.PERMISSION_GRANTED)
+                {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.RECORD_AUDIO},
+                            3);
+                }
+                else if (internetCheck != PackageManager.PERMISSION_GRANTED)
+                {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.INTERNET},
+                            4);
+                }
+            }
+            case 4: {
                 if (internetCheck != PackageManager.PERMISSION_GRANTED) {
-
                     ActivityCompat.requestPermissions(this,
                             new String[]{Manifest.permission.INTERNET},
                             4);
