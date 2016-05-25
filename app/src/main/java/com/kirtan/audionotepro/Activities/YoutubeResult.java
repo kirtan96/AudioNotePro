@@ -58,7 +58,7 @@ public class YoutubeResult extends YouTubeBaseActivity implements NoteFragment.O
         random = 0;
         videoId = getIntent().getStringExtra("VideoID");
         search = getIntent().getStringExtra("Search");
-        splitter = "///" + videoId + "///";
+        splitter = "/////";
         nts = "";
         fragmentVisible = false;
         currentNotePos = -1;

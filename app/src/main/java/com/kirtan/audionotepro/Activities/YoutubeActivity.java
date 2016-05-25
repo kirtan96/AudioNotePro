@@ -3,15 +3,21 @@ package com.kirtan.audionotepro.Activities;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -20,9 +26,13 @@ import com.google.android.youtube.player.YouTubePlayerView;
 import com.kirtan.audionotepro.Fragments.NoteFragment;
 import com.kirtan.audionotepro.R;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,21 +56,25 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
     private final String
             MY_YOUTUBE_FILES = "myYouTubeFiles",
             MY_YOUTUBE_URLS = "myYouTubeURLS";
-    private String cTime, videoId, splitter, nts;
+    private String cTime, videoId, splitter, nts, n, fname;
     public static String nt = "";
+    private File exportedFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_youtube);
+
         youTubePlayerView = (YouTubePlayerView) findViewById(R.id.YoutubePlayer);
         ytnList = (ListView) findViewById(R.id.ytnList);
         add = (FloatingActionButton) findViewById(R.id.fab);
         noteFragment = new NoteFragment();
         myPrefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
         editor = myPrefs.edit();
-        videoId = getIntent().getStringExtra("VideoID");
-        splitter = "///" + videoId + "///";
+        Intent intent = getIntent();
+        videoId = intent.getStringExtra("VideoID");
+        fname = intent.getStringExtra("File");
+        splitter = "/////";
         nts = "";
         fragmentVisible = false;
         currentNotePos = -1;
@@ -302,6 +316,128 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
             lbl.setText(n);
 
             return v;
+        }
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_youtube, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        if(item.getItemId() == R.id.export)
+        {
+            if(export())
+            {
+                Toast.makeText(YoutubeActivity.this, "Exported Successfully to 'My Files/Audio Note/Notes/'", Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                Toast.makeText(YoutubeActivity.this, "Export Unsuccessful!", Toast.LENGTH_LONG).show();
+            }
+        }
+        else
+        {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("text/plain");
+            startActivityForResult(Intent.createChooser(intent, "Select a file"), 0 );
+
+        }
+        return true;
+    }
+
+    private boolean export() {
+
+        File folder = new File(Environment.getExternalStorageDirectory() +
+                File.separator + "Audio Note" + File.separator + "Notes");
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+        String outputFile = folder + File.separator + fname + ".txt";
+        File n = new File(outputFile);
+        exportedFile = n;
+        try {
+            PrintWriter pw = new PrintWriter(n);
+            pw.println(myPrefs.getString(videoId, ""));
+            pw.close();
+            //Toast.makeText(Player.this, "Exported Successfully!", Toast.LENGTH_LONG).show();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 0 && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+            File f = new File(uri.getPath());
+            importFrom(f);
+        }
+    }
+
+    private void importFrom(File f) {
+        try {
+            Scanner scanner = new Scanner(f);
+            scanner = scanner.useDelimiter("njfbvjhk");
+            String fl = "";
+            while(scanner.hasNextLine())
+            {
+                fl+=scanner.nextLine()+ "\n";
+            }
+            if(!fl.contains(splitter)) {
+                n = myPrefs.getString(videoId, "");
+                noteList = new ArrayList<>();
+                for(String s: n.split(splitter))
+                {
+                    if(!s.trim().equals(""))
+                        noteList.add(s);
+                }
+                String temp = "";
+                scanner = new Scanner(fl);
+                while(scanner.hasNextLine())
+                {
+                    String s = scanner.nextLine();
+                    if(s.contains(": "))
+                    {
+                        temp = temp.trim();
+                        noteList.add(temp);
+                        temp = s+"\n";
+                    }
+                    else
+                    {
+                        temp += s+"\n";
+                    }
+                }
+                if(!noteList.contains(temp))
+                    noteList.add(temp.trim());
+                noteList.remove("");
+            }
+            else
+            {
+                noteList = new ArrayList<>();
+                n = myPrefs.getString(videoId, "");
+                for(String s: n.split(splitter))
+                {
+                    if(!s.trim().equals(""))
+                        noteList.add(s);
+                }
+                for(String s: fl.split(splitter))
+                {
+                    if(!s.trim().equals(""))
+                        noteList.add(s);
+                }
+            }
+            updateList();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
 
     }

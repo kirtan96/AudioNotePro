@@ -259,6 +259,7 @@ public class MainActivity extends AppCompatActivity {
                                                             Intent intent = new Intent(MainActivity.this,
                                                                     YoutubeActivity.class);
                                                             intent.putExtra("VideoID", videoId);
+                                                            intent.putExtra("File", name+" (Youtube)");
                                                             editor.putString(MY_YOUTUBE_URLS,
                                                                     myPrefs.getString(MY_YOUTUBE_URLS, "")+ videoId +
                                                                             MY_YOUTUBE_URLS);
@@ -472,6 +473,7 @@ public class MainActivity extends AppCompatActivity {
     private void navigateToYoutube(String file) {
         Intent intent = new Intent(MainActivity.this, YoutubeActivity.class);
         intent.putExtra("VideoID", myPrefs.getString(file+MY_YOUTUBE_FILES,""));
+        intent.putExtra("File", file + " (Youtube)");
         startActivity(intent);
     }
 
