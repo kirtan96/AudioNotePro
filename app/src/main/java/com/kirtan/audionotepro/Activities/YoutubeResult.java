@@ -164,6 +164,10 @@ public class YoutubeResult extends YouTubeBaseActivity implements NoteFragment.O
         });
     }
 
+    /**
+     * Looks for the search token
+     * @param s - The search token
+     */
     private void lookFor(String s) {
         for(String x: noteList){
             if(x.toLowerCase().contains(s.toLowerCase()))
@@ -176,6 +180,10 @@ public class YoutubeResult extends YouTubeBaseActivity implements NoteFragment.O
 
     }
 
+    /**
+     * Edits the note
+     * @param s - The note
+     */
     private void edit(String s)
     {
         YoutubeActivity.nt = s.substring(s.indexOf(" ") + 1);
@@ -183,12 +191,20 @@ public class YoutubeResult extends YouTubeBaseActivity implements NoteFragment.O
         showFragment();
     }
 
+    /**
+     * Deletes the note
+     * @param s - The note
+     */
     private void delete(String s)
     {
         noteList.remove(s);
         updateList();
     }
 
+    /**
+     * Plays the video from the given time stamp
+     * @param temp - The time stamp
+     */
     private void playFrom(String temp) {
         int min = Integer.parseInt(temp.substring(0,temp.indexOf(":")));
         int sec = Integer.parseInt(temp.substring(temp.indexOf(":")+1));
@@ -197,6 +213,9 @@ public class YoutubeResult extends YouTubeBaseActivity implements NoteFragment.O
         youTubePlayer.play();
     }
 
+    /**
+     * Generates the list
+     */
     private void generateList() {
         noteList = new ArrayList<>();
         for(String s: myPrefs.getString(videoId, "").split(splitter))
@@ -209,6 +228,9 @@ public class YoutubeResult extends YouTubeBaseActivity implements NoteFragment.O
         ytnList.setAdapter(nla);
     }
 
+    /**
+     * Hides the fragment
+     */
     private void hideFragment() {
         if(fragmentVisible)
         {
@@ -224,6 +246,9 @@ public class YoutubeResult extends YouTubeBaseActivity implements NoteFragment.O
         }
     }
 
+    /**
+     * Shows the fragment
+     */
     private void showFragment() {
         if(!fragmentVisible)
         {
@@ -250,6 +275,10 @@ public class YoutubeResult extends YouTubeBaseActivity implements NoteFragment.O
         hideFragment();
     }
 
+    /**
+     * Saves the note
+     * @param n - The note
+     */
     private void saveNote(String n) {
         if(YoutubeActivity.nt.equals("")) {
             noteList.add(n);
@@ -262,6 +291,9 @@ public class YoutubeResult extends YouTubeBaseActivity implements NoteFragment.O
         updateList();
     }
 
+    /**
+     * Updates the list
+     */
     private void updateList() {
         Collections.sort((List) noteList);
         String temp = "";

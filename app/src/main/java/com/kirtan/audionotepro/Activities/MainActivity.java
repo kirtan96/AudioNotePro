@@ -470,6 +470,10 @@ public class MainActivity extends AppCompatActivity {
         update();
     }
 
+    /**
+     * Go to YoutubeActivity
+     * @param file - The name of the file
+     */
     private void navigateToYoutube(String file) {
         Intent intent = new Intent(MainActivity.this, YoutubeActivity.class);
         intent.putExtra("VideoID", myPrefs.getString(file+MY_YOUTUBE_FILES,""));
@@ -935,6 +939,10 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * Go to the Player
+     * @param name - The name of the file
+     */
     private void navigateTo(String name) {
         Intent intent = new Intent(MainActivity.this, Player.class);
         intent.putExtra("file", name);

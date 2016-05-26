@@ -25,7 +25,10 @@ public class NoteFragment extends Fragment {
     private View v;
     private OnClickedListener mCallback;
     public static String note;
-    // Container Activity must implement this interface
+
+    /**
+     * Interface for the fragment
+     */
     public interface OnClickedListener {
         void onCloseClicked();
         void onOKClicked();

@@ -326,18 +326,29 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         });
     }
 
+    /**
+     * Edits the string(note)
+     * @param s - String to be edited
+     */
     private void edit(String s) {
         nt = s.substring(s.indexOf(" ")+1);
         cTime = s.substring(0, s.indexOf(" ")+1);
         showFragment();
     }
 
+    /**
+     * Deleted the note from the list
+     * @param s - Note to be deleted from the list
+     */
     private void delete(String s)
     {
         noteList.remove(s);
         updateList();
     }
 
+    /**
+     * Share the notes and audio with others
+     */
     private void share() {
         export();
         Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
@@ -383,6 +394,9 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         }
     }
 
+    /**
+     * Thread that runs with the audio
+     */
     private Runnable UpdateSongTime = new Runnable() {
         public void run() {
 
@@ -409,6 +423,9 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         }
     };
 
+    /**
+     * Checks the current position of the audio and updates the list accordingly
+     */
     private void checkCurrentPos() {
         if(noteList != null) {
             for (int i = 0; i < noteList.size(); i++) {
@@ -466,6 +483,9 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         hideFragment();
     }
 
+    /**
+     * Hides the fragment
+     */
     private void hideFragment() {
         if(fragmentVisible)
         {
@@ -479,6 +499,9 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         }
     }
 
+    /**
+     * Shows the fragment
+     */
     private void showFragment() {
         if(!fragmentVisible)
         {
@@ -492,6 +515,10 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         }
     }
 
+    /**
+     * Saves the note
+     * @param s - The note to be saved
+     */
     public void saveNote(String s)
     {
         if(nt.equals("")) {
@@ -505,6 +532,9 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         updateList();
     }
 
+    /**
+     * Updates the list
+     */
     private void updateList() {
         Collections.sort((List) noteList);
         String temp = "";
@@ -620,6 +650,10 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         return true;
     }
 
+    /**
+     * Exports the notes to the file on the device
+     * @return  Returns true if exported successfully, false otherwise
+     */
     private boolean export() {
 
         File folder = new File(Environment.getExternalStorageDirectory() +
@@ -653,6 +687,10 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         }
     }
 
+    /**
+     * Import the notes from the file
+     * @param f - File from which the notes will be imported
+     */
     private void importFrom(File f) {
         try {
             Scanner scanner = new Scanner(f);

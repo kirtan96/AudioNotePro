@@ -240,22 +240,6 @@ public class SearchResult extends AppCompatActivity implements AudioNoteFragment
                     editor.putString(uri, temp);
                     editor.apply();
                 }
-                /*while(in.hasNextLine())
-                {
-                    String temp = in.nextLine();
-                    noteList.add(temp.trim());
-                    if(temp.toLowerCase().contains(search.toLowerCase()))
-                    {
-                        temp = temp.substring(0, 5);
-                        int min = Integer.parseInt(temp.substring(0,2));
-                        int sec = Integer.parseInt(temp.substring(3, 5));
-                        int t = (int)(TimeUnit.MINUTES.toMillis(min) + TimeUnit.SECONDS.toMillis(sec));
-                        mediaPlayer.pause();
-                        mediaPlayer.seekTo(t);
-                        mediaPlayer.start();
-                        myHandler.postDelayed(UpdateSongTime, 100);
-                    }
-                }*/
                 noteList.remove("");
                 Collections.sort((List) noteList);
                 nla = new NoteListAdapter(noteList);
@@ -330,12 +314,20 @@ public class SearchResult extends AppCompatActivity implements AudioNoteFragment
         });
     }
 
+    /**
+     * Edits the string(note)
+     * @param s - String to be edited
+     */
     private void edit(String s) {
         Player.nt = s.substring(s.indexOf(" ")+1);
         cTime = s.substring(0, s.indexOf(" ")+1);
         showFragment();
     }
 
+    /**
+     * Deleted the note from the list
+     * @param s - Note to be deleted from the list
+     */
     private void delete(String s)
     {
         noteList.remove(s);
@@ -370,6 +362,9 @@ public class SearchResult extends AppCompatActivity implements AudioNoteFragment
         }
     }
 
+    /**
+     * The Thread to run with the audio
+     */
     private Runnable UpdateSongTime = new Runnable() {
         public void run() {
 
@@ -393,6 +388,9 @@ public class SearchResult extends AppCompatActivity implements AudioNoteFragment
         }
     };
 
+    /**
+     * Checks the current position of the audio and updated the list accordingly
+     */
     private void checkCurrentPos() {
         if(noteList != null) {
             for (int i = 0; i < noteList.size(); i++) {
@@ -443,6 +441,10 @@ public class SearchResult extends AppCompatActivity implements AudioNoteFragment
         hideFragment();
     }
 
+    /**
+     * Saves the note to the list
+     * @param s - The note to be saved
+     */
     private void saveNote(String s) {
         if(Player.nt.equals("")) {
             noteList.add(s);
@@ -455,6 +457,9 @@ public class SearchResult extends AppCompatActivity implements AudioNoteFragment
         updateList();
     }
 
+    /**
+     * Updates the list
+     */
     private void updateList() {
         Collections.sort((List) noteList);
         String temp = "";
@@ -467,6 +472,9 @@ public class SearchResult extends AppCompatActivity implements AudioNoteFragment
         note.setAdapter(nla);
     }
 
+    /**
+     * Hides the fragment
+     */
     private void hideFragment() {
         if(fragmentVisible)
         {
@@ -480,6 +488,9 @@ public class SearchResult extends AppCompatActivity implements AudioNoteFragment
         }
     }
 
+    /**
+     * Shows the fragment
+     */
     private void showFragment() {
         if(!fragmentVisible)
         {
@@ -493,6 +504,9 @@ public class SearchResult extends AppCompatActivity implements AudioNoteFragment
         }
     }
 
+    /**
+     * Adapter for the listview
+     */
     private class NoteListAdapter extends BaseAdapter
     {
 

@@ -34,6 +34,9 @@ public class AudioNoteFragment extends Fragment {
     SharedPreferences.Editor editor;
     MediaPlayer mediaPlayer;
 
+    /**
+     * Interface for the fragment
+     */
     public interface OnClickedListener {
         void onCloseClicked();
         void onOKClicked();

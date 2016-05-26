@@ -178,6 +178,10 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
 
     }
 
+    /**
+     * Edits the note
+     * @param s - The note
+     */
     private void edit(String s)
     {
         YoutubeActivity.nt = s.substring(s.indexOf(" ") + 1);
@@ -185,12 +189,19 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
         showFragment();
     }
 
+    /**
+     * Deletes the note
+     * @param s - The note
+     */
     private void delete(String s)
     {
         noteList.remove(s);
         updateList();
     }
 
+    /**
+     * Saves the recording
+     */
     private void save() {
         editor.putInt("recordingsInt", myPrefs.getInt("recordingsInt", 1) + 1);
         editor.apply();
@@ -239,6 +250,9 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
         alert.show();
     }
 
+    /**
+     * Timer of the recording
+     */
     private Runnable UpdateRecordingTime = new Runnable() {
         public void run() {
             timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
@@ -264,6 +278,10 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
         hideFragment();
     }
 
+    /**
+     * Saves the note
+     * @param n - The note
+     */
     private void saveNote(String n) {
         if(YoutubeActivity.nt.equals("")) {
             noteList.add(n);
@@ -276,6 +294,9 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
         updateList();
     }
 
+    /**
+     * Updates the list
+     */
     private void updateList() {
         Collections.sort((List) noteList);
         String temp = "";
@@ -288,6 +309,9 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
         note.setAdapter(nla);
     }
 
+    /**
+     * Hides the fragment
+     */
     private void hideFragment() {
         if(fragmentVisible)
         {
@@ -299,6 +323,9 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
         }
     }
 
+    /**
+     * Shows the fragment
+     */
     private void showFragment() {
         if(!fragmentVisible)
         {

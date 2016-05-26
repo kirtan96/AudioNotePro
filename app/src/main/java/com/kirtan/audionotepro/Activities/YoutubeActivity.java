@@ -164,6 +164,10 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
         });
     }
 
+    /**
+     * Edits the note
+     * @param s - The note
+     */
     private void edit(String s)
     {
         nt = s.substring(s.indexOf(" ") + 1);
@@ -171,12 +175,20 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
         showFragment();
     }
 
+    /**
+     * Deletes the note
+     * @param s - The note
+     */
     private void delete(String s)
     {
         noteList.remove(s);
         updateList();
     }
 
+    /**
+     * Plays the video from given time stamp
+     * @param temp - The time stamp
+     */
     private void playFrom(String temp) {
         int min = Integer.parseInt(temp.substring(0,2));
         int sec = Integer.parseInt(temp.substring(3,5));
@@ -186,6 +198,9 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
             youTubePlayer.play();
     }
 
+    /**
+     * Generates the list
+     */
     private void generateList() {
         noteList = new ArrayList<>();
         for(String s: myPrefs.getString(videoId, "").split(splitter))
@@ -198,6 +213,9 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
         ytnList.setAdapter(nla);
     }
 
+    /**
+     * Hides the fragment
+     */
     private void hideFragment() {
         if(fragmentVisible)
         {
@@ -213,6 +231,9 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
         }
     }
 
+    /**
+     * Shows the fragment
+     */
     private void showFragment() {
         if(!fragmentVisible)
         {
@@ -239,6 +260,10 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
         hideFragment();
     }
 
+    /**
+     * Saves the note
+     * @param n - The note
+     */
     private void saveNote(String n) {
         if(nt.equals("")) {
             noteList.add(n);
@@ -251,6 +276,9 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
         updateList();
     }
 
+    /**
+     * Updates the list
+     */
     private void updateList() {
         Collections.sort((List) noteList);
         String temp = "";
@@ -364,6 +392,10 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
         return true;
     }
 
+    /**
+     * Exports the notes to the file on the device
+     * @return - True if export is successful, False otherwise
+     */
     private boolean export() {
 
         File folder = new File(Environment.getExternalStorageDirectory() +
@@ -397,6 +429,10 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
         }
     }
 
+    /**
+     * Imports all the notes from the file
+     * @param f - The file
+     */
     private void importFrom(File f) {
         try {
             Scanner scanner = new Scanner(f);
@@ -456,6 +492,9 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
 
     }
 
+    /**
+     * Shares the notes with others
+     */
     private void share() {
         export();
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
