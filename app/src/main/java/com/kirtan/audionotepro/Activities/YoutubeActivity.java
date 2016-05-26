@@ -15,9 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -59,21 +61,26 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
     private String cTime, videoId, splitter, nts, n, fname;
     public static String nt = "";
     private File exportedFile;
+    private ImageView shareButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_youtube);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setActionBar(toolbar);
 
         youTubePlayerView = (YouTubePlayerView) findViewById(R.id.YoutubePlayer);
         ytnList = (ListView) findViewById(R.id.ytnList);
         add = (FloatingActionButton) findViewById(R.id.fab);
+        shareButton = (ImageView) findViewById(R.id.shareButton);
         noteFragment = new NoteFragment();
         myPrefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
         editor = myPrefs.edit();
         Intent intent = getIntent();
         videoId = intent.getStringExtra("VideoID");
         fname = intent.getStringExtra("File");
+        setTitle(fname.replace(" (Youtube)", ""));
         splitter = "/////";
         nts = "";
         fragmentVisible = false;
@@ -146,6 +153,13 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
                 });
                 builder.show();
                 return true;
+            }
+        });
+
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                share();
             }
         });
     }
@@ -440,5 +454,14 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
             e.printStackTrace();
         }
 
+    }
+
+    private void share() {
+        export();
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportedFile));
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, "www.youtube.com/watch?v="+videoId);
+        startActivity(Intent.createChooser(sharingIntent, "Share audio and notes via"));
     }
 }
