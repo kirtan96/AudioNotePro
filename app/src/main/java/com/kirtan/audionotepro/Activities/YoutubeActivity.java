@@ -399,7 +399,7 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
     private boolean export() {
 
         File folder = new File(Environment.getExternalStorageDirectory() +
-                File.separator + "Audio Note" + File.separator + "Notes");
+                File.separator + "Audio Note Pro" + File.separator + "Notes");
         if (!folder.exists()) {
             folder.mkdirs();
         }

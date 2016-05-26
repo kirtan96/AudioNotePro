@@ -84,7 +84,7 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
         File folder = new File(Environment.getExternalStorageDirectory() +
-                File.separator + "Audio Note" + File.separator + "Recordings");
+                File.separator + "Audio Note Pro" + File.separator + "Recordings");
         if (!folder.exists()) {
             folder.mkdirs();
         }
