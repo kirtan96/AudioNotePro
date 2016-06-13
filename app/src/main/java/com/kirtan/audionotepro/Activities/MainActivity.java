@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     TextView title;
     Button search;
     FileAdapter adp;
+    boolean isFolderOpen;
     int readCheck, writeCheck, recordCheck, internetCheck;
     public View row;
     ArrayList<String> folderLists, fileLists, recordLists, youTubeLists, noteList;
@@ -75,7 +76,12 @@ public class MainActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     1);
         }
+        if (recordCheck != PackageManager.PERMISSION_GRANTED) {
 
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.RECORD_AUDIO},
+                    1);
+        }
 
 
         FloatingActionButton add = (FloatingActionButton) findViewById(R.id.fab);
@@ -90,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         editor = myPrefs.edit();
         title = (TextView) findViewById(R.id.title);
         title.setVisibility(View.INVISIBLE);
+        isFolderOpen = false;
 
         assert add != null;
         add.setOnClickListener(new View.OnClickListener() {
@@ -185,8 +192,8 @@ public class MainActivity extends AppCompatActivity {
                                                         if (name.length() >= 1) {
                                                             name = name.substring(0, 1).toUpperCase() + name.substring(1);
                                                         }
-                                                        if (!myPrefs.getString(MY_FILES, "").contains(name) &&
-                                                                !name.trim().equals("")) {
+                                                        if (!name.trim().equals("") &&
+                                                                checkEveryFolder(name+"\n")) {
                                                             Intent intent = new Intent(MainActivity.this, RecordAudio.class);
                                                             intent.putExtra("fileName", name);
                                                             intent.putExtra("folderName", "All Notes");
@@ -210,97 +217,99 @@ public class MainActivity extends AppCompatActivity {
 
                                         alertDialog.show();
                                     }
-                            else if(which == 3)
-                            {
-                                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-                                alertDialog.setTitle("Add a YouTube Video");
+                                else if(which == 3)
+                                {
+                                    final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+                                    alertDialog.setTitle("Add a YouTube Video");
 
-                                final EditText input = new EditText(MainActivity.this);
-                                final EditText input2 = new EditText(MainActivity.this);
-                                input.setSingleLine();
-                                input.setHint("Name of the file");
-                                input2.setHint("YouTube URL");
-                                input2.setSingleLine();
-                                final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.MATCH_PARENT);
-                                input.setLayoutParams(lp);
-                                input2.setLayoutParams(lp);
-                                LinearLayout ll = new LinearLayout(MainActivity.this);
-                                ll.setOrientation(LinearLayout.VERTICAL);
-                                ll.addView(input);
-                                ll.addView(input2);
-                                alertDialog.setView(ll);
+                                    final EditText input = new EditText(MainActivity.this);
+                                    final EditText input2 = new EditText(MainActivity.this);
+                                    input.setSingleLine();
+                                    input.setHint("Name of the file");
+                                    input2.setHint("YouTube URL");
+                                    input2.setSingleLine();
+                                    final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                            LinearLayout.LayoutParams.MATCH_PARENT,
+                                            LinearLayout.LayoutParams.MATCH_PARENT);
+                                    input.setLayoutParams(lp);
+                                    input2.setLayoutParams(lp);
+                                    LinearLayout ll = new LinearLayout(MainActivity.this);
+                                    ll.setOrientation(LinearLayout.VERTICAL);
+                                    ll.addView(input);
+                                    ll.addView(input2);
+                                    alertDialog.setView(ll);
 
-                                alertDialog.setPositiveButton("Add",
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                String name = input.getText().toString().trim();
-                                                String url = input2.getText().toString().trim();
-                                                String videoId = "";
-                                                if(url.contains("youtube.com/watch?v=")){
-                                                    videoId = url.substring(url.indexOf("=")+1);
-                                                }
-                                                else if(url.contains("youtu.be/")){
-                                                    videoId = url.substring(url.indexOf("be/") + 3);
-                                                }
-                                                if (name.length() >= 1)
-                                                {
-                                                    name = name.substring(0,1).toUpperCase()+name.substring(1);
-                                                    if (!myPrefs.getString(MY_YOUTUBE_FILES, "").contains(name) &&
-                                                            !name.trim().equals("")) {
-                                                        if (url.contains("youtube.com/watch?v=") ||
-                                                                url.contains("youtu.be/")){
-                                                            editor.putString(MY_YOUTUBE_FILES,
-                                                                    myPrefs.getString(MY_YOUTUBE_FILES, "")+
-                                                                    name + MY_YOUTUBE_FILES);
-                                                            Intent intent = new Intent(MainActivity.this,
-                                                                    YoutubeActivity.class);
-                                                            intent.putExtra("VideoID", videoId);
-                                                            intent.putExtra("File", name+" (Youtube)");
-                                                            editor.putString(MY_YOUTUBE_URLS,
-                                                                    myPrefs.getString(MY_YOUTUBE_URLS, "")+ videoId +
-                                                                            MY_YOUTUBE_URLS);
-                                                            editor.putString(name+MY_YOUTUBE_FILES, videoId);
-                                                            editor.apply();
-                                                            startActivity(intent);
+                                    alertDialog.setPositiveButton("Add",
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    String name = input.getText().toString().trim();
+                                                    String url = input2.getText().toString().trim();
+                                                    String videoId = "";
+                                                    if(url.contains("youtube.com/watch?v=")){
+                                                        videoId = url.substring(url.indexOf("=")+1);
+                                                    }
+                                                    else if(url.contains("youtu.be/")){
+                                                        videoId = url.substring(url.indexOf("be/") + 3);
+                                                    }
+                                                    if (name.length() >= 1)
+                                                    {
+                                                        name = name.substring(0,1).toUpperCase()+name.substring(1);
+                                                        if (checkEveryFolder(name+"\n") &&
+                                                                !name.trim().equals("") &&
+                                                                checkEveryVideoIds(videoId)) {
+                                                            if (url.contains("youtube.com/watch?v=") ||
+                                                                    url.contains("youtu.be/")){
+                                                                editor.putString(MY_YOUTUBE_FILES,
+                                                                        myPrefs.getString(MY_YOUTUBE_FILES, "")+
+                                                                        name + MY_YOUTUBE_FILES);
+                                                                Intent intent = new Intent(MainActivity.this,
+                                                                        YoutubeActivity.class);
+                                                                intent.putExtra("VideoID", videoId);
+                                                                intent.putExtra("File", name+" (Youtube)");
+                                                                editor.putString(MY_YOUTUBE_URLS,
+                                                                        myPrefs.getString(MY_YOUTUBE_URLS, "")+ videoId +
+                                                                                MY_YOUTUBE_URLS);
+                                                                editor.putString(name+MY_YOUTUBE_FILES, videoId);
+                                                                editor.apply();
+                                                                startActivity(intent);
+                                                            }
+                                                            else
+                                                            {
+                                                                Toast.makeText(MainActivity.this,
+                                                                        "Invalid URL!",
+                                                                        Toast.LENGTH_LONG).show();
+                                                            }
                                                         }
-                                                        else
-                                                        {
+                                                        else{
                                                             Toast.makeText(MainActivity.this,
-                                                                    "Invalid URL!",
+                                                                    "File with this name/video already exists!",
                                                                     Toast.LENGTH_LONG).show();
                                                         }
-                                                    }
-                                                    else{
+                                                    } else {
                                                         Toast.makeText(MainActivity.this,
-                                                                "File with this name already exists!",
+                                                                "Invalid File Name!",
                                                                 Toast.LENGTH_LONG).show();
                                                     }
-                                                } else {
-                                                    Toast.makeText(MainActivity.this,
-                                                            "Invalid File Name!",
-                                                            Toast.LENGTH_LONG).show();
+                                                    imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                                                    update();
                                                 }
-                                                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-                                                update();
-                                            }
-                                        });
+                                            });
 
-                                alertDialog.setNegativeButton("Cancel",
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-                                                dialog.cancel();
-                                            }
-                                        });
+                                    alertDialog.setNegativeButton("Cancel",
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                                                    dialog.cancel();
+                                                }
+                                            });
 
-                                alertDialog.show();
-                            }
+                                    alertDialog.show();
                                 }
-                            });
+                                    }
+                            }
+                    );
                 } else {
                     builder.setItems(new String[]{"Open Audio File", "Start New Recording"}, new DialogInterface.OnClickListener() {
                         @Override
@@ -330,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
                                                 if (name.length() >= 1) {
                                                     name = name.substring(0, 1).toUpperCase() + name.substring(1);
                                                 }
-                                                if (!myPrefs.getString(MY_FILES, "").contains(name) &&
+                                                if (checkEveryFolder(name+"\n") &&
                                                         !name.trim().equals("")) {
                                                     Intent intent = new Intent(MainActivity.this, RecordAudio.class);
                                                     intent.putExtra("fileName", name);
@@ -375,32 +384,7 @@ public class MainActivity extends AppCompatActivity {
                     navigateTo(file.trim());
                 }
                 else {
-                    folderLists = new ArrayList<>();
-                    noteList = new ArrayList<>();
-                    Scanner in = new Scanner(myPrefs.getString(file + " (FOLDER)", ""));
-                    fileLists = new ArrayList<>();
-                    recordLists = new ArrayList<>();
-                    while (in.hasNextLine()) {
-                        String temp = in.nextLine().trim();
-                        if (myPrefs.getString(temp, "").contains("file:/")) {
-                            recordLists.add(temp);
-                        } else {
-                            fileLists.add(temp);
-                        }
-                    }
-                    recordLists.remove("");
-                    fileLists.remove("");
-                    Collections.sort((List) recordLists);
-                    Collections.sort((List) fileLists);
-                    noteList.addAll(fileLists);
-                    noteList.addAll(recordLists);
-                    noteList.remove("");
-                    title.setVisibility(View.VISIBLE);
-                    back.setVisibility(View.VISIBLE);
-                    title.setText(file);
-                    setTitle(file);
-                    adp = new FileAdapter(noteList);
-                    note.setAdapter(adp);
+                    updateFolder();
                 }
             }
         });
@@ -470,6 +454,49 @@ public class MainActivity extends AppCompatActivity {
         update();
     }
 
+    private boolean checkEveryVideoIds(String videoId) {
+        boolean b = true;
+        for(String x: myPrefs.getString(MY_YOUTUBE_URLS,"").split(MY_YOUTUBE_URLS))
+        {
+            if(x.trim().equals(videoId))
+            {
+                b = false;
+                break;
+            }
+        }
+        return b;
+    }
+
+    private void updateFolder() {
+        isFolderOpen = true;
+        folderLists = new ArrayList<>();
+        noteList = new ArrayList<>();
+        Scanner in = new Scanner(myPrefs.getString(file + " (FOLDER)", ""));
+        fileLists = new ArrayList<>();
+        recordLists = new ArrayList<>();
+        while (in.hasNextLine()) {
+            String temp = in.nextLine().trim();
+            if (myPrefs.getString(temp, "").contains("file:/")) {
+                recordLists.add(temp);
+            } else {
+                fileLists.add(temp);
+            }
+        }
+        recordLists.remove("");
+        fileLists.remove("");
+        Collections.sort((List) recordLists);
+        Collections.sort((List) fileLists);
+        noteList.addAll(fileLists);
+        noteList.addAll(recordLists);
+        noteList.remove("");
+        title.setVisibility(View.VISIBLE);
+        back.setVisibility(View.VISIBLE);
+        title.setText(file);
+        setTitle(file);
+        adp = new FileAdapter(noteList);
+        note.setAdapter(adp);
+    }
+
     /**
      * Go to YoutubeActivity
      * @param file - The name of the file
@@ -485,6 +512,7 @@ public class MainActivity extends AppCompatActivity {
      * Updates the listView
      */
     private void update() {
+        isFolderOpen = false;
         back.setVisibility(View.INVISIBLE);
         title.setVisibility(View.INVISIBLE);
         noteList = new ArrayList<>();
@@ -545,6 +573,39 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent_upload, 1);
     }
 
+
+    private boolean checkEveryFolder(String name) {
+        boolean b = true;
+        for(String x: myPrefs.getString(MY_FOLDERS,"").split("\n"))
+        {
+            if(!x.trim().equals("")){
+                String z = myPrefs.getString(x.trim(),"");
+                if(myPrefs.getString(x.trim(),"").contains(name)){
+                    b = false;
+                    break;
+                }
+            }
+        }
+        for(String x: myPrefs.getString(MY_FILES,"").split("\n"))
+        {
+            if(!x.trim().equals("")) {
+                if (x.trim().equals(name.replace("\n", ""))) {
+                    b = false;
+                    break;
+                }
+            }
+        }
+        for(String x: myPrefs.getString(MY_YOUTUBE_FILES,"").split(MY_YOUTUBE_FILES))
+        {
+            if(!x.trim().equals("")) {
+                if (x.trim().equals(name.replace("\n", ""))) {
+                    b = false;
+                    break;
+                }
+            }
+        }
+        return b;
+    }
 
     /**
      * Moves the selected file to selected folder
@@ -838,12 +899,13 @@ public class MainActivity extends AppCompatActivity {
             t = t.replace(myPrefs.getString(name+MY_YOUTUBE_FILES,"")+MY_YOUTUBE_URLS,"");
             editor.putString(MY_YOUTUBE_URLS, t);
             editor.remove(myPrefs.getString(name+MY_YOUTUBE_FILES,""));
+            editor.remove(name+MY_YOUTUBE_FILES);
             editor.remove(vID);
             editor.apply();
             update();
         }
         update();
-        Toast.makeText(MainActivity.this, "Deleted...", Toast.LENGTH_LONG).show();
+        Toast.makeText(MainActivity.this, "Deleted", Toast.LENGTH_LONG).show();
     }
 
 
@@ -944,6 +1006,7 @@ public class MainActivity extends AppCompatActivity {
      * @param name - The name of the file
      */
     private void navigateTo(String name) {
+        isFolderOpen = false;
         Intent intent = new Intent(MainActivity.this, Player.class);
         intent.putExtra("file", name);
         startActivity(intent);
@@ -969,10 +1032,15 @@ public class MainActivity extends AppCompatActivity {
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                             1);
                 }
-                else if (readCheck != PackageManager.PERMISSION_GRANTED) {
+                /*else if (readCheck != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(this,
                             new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                             2);
+                }*/
+                else if (recordCheck != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.RECORD_AUDIO},
+                            3);
                 }
             }
             case 2: {
@@ -1067,13 +1135,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View getView(int pos, View v, ViewGroup arg2)
         {
-            String c = getItem(pos);
             if (pos < folderLists.size())
                 v = getLayoutInflater().inflate(R.layout.folder_list, null);
-            else if(myPrefs.getString(noteList.get(pos), "").contains("file://"))
-                v = getLayoutInflater().inflate(R.layout.recordings_list, null);
             else if(pos < folderLists.size() + fileLists.size())
                 v = getLayoutInflater().inflate(R.layout.file_list, null);
+            else if(pos < folderLists.size() + fileLists.size() + recordLists.size())
+                v = getLayoutInflater().inflate(R.layout.recordings_list, null);
             else
                 v = getLayoutInflater().inflate(R.layout.youtube_list, null);
 
@@ -1083,5 +1150,25 @@ public class MainActivity extends AppCompatActivity {
             return v;
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(title.getVisibility() == View.VISIBLE)
+        {
+            update();
+        }
+        else {
+            finish();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!isFolderOpen)
+            update();
+        else
+            updateFolder();
     }
 }

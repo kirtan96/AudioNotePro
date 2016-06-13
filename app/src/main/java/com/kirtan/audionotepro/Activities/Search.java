@@ -75,7 +75,8 @@ public class Search extends AppCompatActivity {
                                     (!entryKey.getKey().contains("file://")) &&
                                     (!entryKey.getKey().contains("(FOLDER)")) &&
                                     (!entryKey.getKey().contains("myFolders")) &&
-                                    (!entryKey.getKey().contains("recordingsInt"))) {
+                                    (!entryKey.getKey().contains("recordingsInt")) &&
+                                    (!myPrefs.getString("myYouTubeURLS","").contains(search))) {
                                 if (myPrefs.getString(entryKey.getValue().toString(), "").toLowerCase().contains(search.toLowerCase()) ||
                                         ((!entryKey.getKey().toString().equals("myFiles") &&
                                                 (entryKey.getKey().toString().toLowerCase().contains(search.toLowerCase())))))
@@ -190,8 +191,12 @@ public class Search extends AppCompatActivity {
         @Override
         public View getView(int pos, View v, ViewGroup arg2)
         {
+            String c = getItem(pos);
             if (pos < nlist.size())
-                v = getLayoutInflater().inflate(R.layout.file_list, null);
+                if (myPrefs.getString(c, "").contains("file:/"))
+                    v = getLayoutInflater().inflate(R.layout.recordings_list, null);
+                else
+                    v = getLayoutInflater().inflate(R.layout.file_list, null);
             else
                 v = getLayoutInflater().inflate(R.layout.youtube_list, null);
 

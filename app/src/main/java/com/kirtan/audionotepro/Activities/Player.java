@@ -4,6 +4,7 @@ import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -11,7 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
@@ -47,7 +46,6 @@ import java.util.concurrent.TimeUnit;
 public class Player extends AppCompatActivity implements AudioNoteFragment.OnClickedListener {
 
     public static MediaPlayer mediaPlayer;
-    Button pause, skipLeft, skipRight;
     TextView currentTime, finalTime, t;
     SeekBar seekBar;
     ListView note;
@@ -56,7 +54,10 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
     ArrayList<String> noteList;
     SharedPreferences myPrefs;
     SharedPreferences.Editor editor;
-    private String cTime, n = "", uri = "", real = "", nts = "";
+    private static String cTime;
+    private String n = "";
+    private String uri = "";
+    private String nts = "";
     final String splitter = "/////";
     public static String nt = "", random="";
     int currentNotePos;
@@ -68,7 +69,8 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
     File exportedFile = null;
     private FragmentManager fragmentManager;
     private AudioNoteFragment audioNoteFragment;
-    FloatingActionButton add;
+    FloatingActionButton add, pause, skipLeft, skipRight;
+    Drawable pau;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,18 +80,19 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         setSupportActionBar(toolbar);
 
         shareButton = (ImageView) findViewById(R.id.shareButton);
-        pause = (Button) findViewById(R.id.pauseButton);
+        pause = (FloatingActionButton) findViewById(R.id.pauseButton);
         currentTime = (TextView) findViewById(R.id.currentTime);
         finalTime = (TextView) findViewById(R.id.finalTime);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
         note = (ListView) findViewById(R.id.note);
         t = (TextView) findViewById(R.id.noteText);
-        skipLeft = (Button) findViewById(R.id.leftskip);
+        skipLeft = (FloatingActionButton) findViewById(R.id.leftskip);
         skipLeft.setEnabled(false);
-        skipRight = (Button) findViewById(R.id.rightskip);
+        skipRight = (FloatingActionButton) findViewById(R.id.rightskip);
         isAppOpen = true;
         mediaPlayer = new MediaPlayer();
         random = "";
+        pau = getResources().getDrawable(android.R.drawable.ic_media_pause);
 
         myPrefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
         editor = myPrefs.edit();
@@ -166,11 +169,11 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
             }
 
             private void toggleText() {
-                if (pause.getText().toString().equals("Pause")) {
-                    pause.setText("Play");
+                if (pause.getDrawable().getConstantState().equals(pau.getConstantState())) {
+                    pause.setImageResource(android.R.drawable.ic_media_play);
                     mediaPlayer.pause();
                 } else {
-                    pause.setText("Pause");
+                    pause.setImageResource(android.R.drawable.ic_media_pause);
                     mediaPlayer.start();
                     myHandler.postDelayed(UpdateSongTime, 100);
                 }
@@ -290,8 +293,8 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         note.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String time = note.getItemAtPosition(position).toString();
-                time = time.substring(0, time.indexOf(": "));
+                String temp = noteList.get(position);
+                String time = temp.substring(0, temp.indexOf(": "));
                 int min = Integer.parseInt(time.substring(0, time.indexOf(":")));
                 int sec = Integer.parseInt(time.substring(time.indexOf(":")+1));
                 int t = (int) (TimeUnit.MINUTES.toMillis(min) + TimeUnit.SECONDS.toMillis(sec));
@@ -304,51 +307,41 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
 
         note.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(Player.this);
-                builder.setTitle("Choose an option:");
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final String temp = noteList.get(position);
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(Player.this);
                 builder.setItems(new String[]{"Edit", "Delete"}, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String s = noteList.get(position);
-                        if (which == 0) {
-                            nts = s;
-                            edit(s);
-                        } else {
-                            delete(s);
+                        if(which == 0)
+                        {
+                            nts = temp;
+                            edit(nts);
+                        }
+                        else
+                        {
+                            delete(temp);
                         }
                     }
                 });
-
                 builder.show();
                 return true;
             }
         });
     }
 
-    /**
-     * Edits the string(note)
-     * @param s - String to be edited
-     */
-    private void edit(String s) {
+    public void edit(String s) {
         nt = s.substring(s.indexOf(" ")+1);
         cTime = s.substring(0, s.indexOf(" ")+1);
         showFragment();
     }
 
-    /**
-     * Deleted the note from the list
-     * @param s - Note to be deleted from the list
-     */
     private void delete(String s)
     {
         noteList.remove(s);
         updateList();
     }
 
-    /**
-     * Share the notes and audio with others
-     */
     private void share() {
         export();
         Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
@@ -394,9 +387,6 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         }
     }
 
-    /**
-     * Thread that runs with the audio
-     */
     private Runnable UpdateSongTime = new Runnable() {
         public void run() {
 
@@ -412,10 +402,10 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
                 seekBar.setProgress((int) startTime);
                 if(currentTime.getText().toString().equals(finalTime.getText().toString()))
                 {
-                    pause.setText("Play");
+                    pause.setImageResource(android.R.drawable.ic_media_play);
                 }
                 else {
-                    pause.setText("Pause");
+                    pause.setImageResource(android.R.drawable.ic_media_pause);
                 }
                 checkCurrentPos();
                 myHandler.postDelayed(this, 100);
@@ -423,9 +413,6 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         }
     };
 
-    /**
-     * Checks the current position of the audio and updates the list accordingly
-     */
     private void checkCurrentPos() {
         if(noteList != null) {
             for (int i = 0; i < noteList.size(); i++) {
@@ -483,9 +470,6 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         hideFragment();
     }
 
-    /**
-     * Hides the fragment
-     */
     private void hideFragment() {
         if(fragmentVisible)
         {
@@ -499,9 +483,6 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         }
     }
 
-    /**
-     * Shows the fragment
-     */
     private void showFragment() {
         if(!fragmentVisible)
         {
@@ -515,10 +496,6 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         }
     }
 
-    /**
-     * Saves the note
-     * @param s - The note to be saved
-     */
     public void saveNote(String s)
     {
         if(nt.equals("")) {
@@ -532,9 +509,6 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         updateList();
     }
 
-    /**
-     * Updates the list
-     */
     private void updateList() {
         Collections.sort((List) noteList);
         String temp = "";
@@ -609,7 +583,7 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
             TextView lbl = (TextView) v.findViewById(R.id.note);
             TextView ts = (TextView) v.findViewById(R.id.timeStamp);
             String temp = s.get(pos);
-            String t = temp.substring(0, temp.indexOf(": ")+1);
+            String t = temp.substring(0, temp.indexOf(": "));
             String n = temp.substring(temp.indexOf(": ") + 2);
             ts.setText(t);
             lbl.setText(n);
@@ -632,7 +606,7 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         {
             if(export())
             {
-                Toast.makeText(Player.this, "Exported Successfully to 'My Files/Audio Note/Notes/'", Toast.LENGTH_LONG).show();
+                Toast.makeText(Player.this, "Exported Successfully to 'My Files/Audio Note Pro/Notes/'", Toast.LENGTH_LONG).show();
             }
             else
             {
@@ -643,21 +617,16 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("text/plain");
-            //intent.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent, "Select a file"), PICK_FILE );
 
         }
         return true;
     }
 
-    /**
-     * Exports the notes to the file on the device
-     * @return  Returns true if exported successfully, false otherwise
-     */
     private boolean export() {
 
         File folder = new File(Environment.getExternalStorageDirectory() +
-                File.separator + "Audio Note Pro" + File.separator + "Notes");
+                File.separator + "Audio Note" + File.separator + "Notes");
         if (!folder.exists()) {
             folder.mkdirs();
         }
@@ -687,10 +656,6 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
         }
     }
 
-    /**
-     * Import the notes from the file
-     * @param f - File from which the notes will be imported
-     */
     private void importFrom(File f) {
         try {
             Scanner scanner = new Scanner(f);
@@ -748,5 +713,17 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(fragmentVisible)
+        {
+            hideFragment();
+        }
+        else
+        {
+            finish();
+        }
     }
 }

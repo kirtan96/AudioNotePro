@@ -34,16 +34,14 @@
             android:textIsSelectable="false" />
 
         <Button
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:background="@mipmap/correct"
             android:id="@+id/ok"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="5dp"
-            android:layout_marginTop="2dp"
-            android:layout_above="@+id/close" />
+            android:layout_above="@+id/close"
+            android:layout_alignLeft="@+id/close"
+            android:layout_alignStart="@+id/close"
+            android:layout_marginLeft="5dp" />
 
         <Button
             android:layout_width="50dp"
@@ -53,13 +51,13 @@
             android:backgroundTint="#f90404"
             android:backgroundTintMode="multiply"
             android:layout_alignParentBottom="true"
-            android:layout_alignRight="@+id/ok"
-            android:layout_alignEnd="@+id/ok" />
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Continue playing the audio"
+            android:text="Continue Audio"
             android:id="@+id/audio"
             android:checked="false"
             android:layout_alignParentBottom="true"

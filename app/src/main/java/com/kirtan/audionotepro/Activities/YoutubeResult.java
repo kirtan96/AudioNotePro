@@ -376,4 +376,15 @@ public class YoutubeResult extends YouTubeBaseActivity implements NoteFragment.O
         }
 
     }
+
+    @Override
+    public void onBackPressed() {
+        if(fragmentVisible)
+        {
+            hideFragment();
+        }
+        else {
+            finish();
+        }
+    }
 }

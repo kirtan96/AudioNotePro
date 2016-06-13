@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +37,7 @@ import java.util.List;
 public class RecordAudio extends AppCompatActivity implements NoteFragment.OnClickedListener{
 
     private MediaRecorder mediaRecorder;
-    Button start, stop;
+    FloatingActionButton start;
     SharedPreferences myPrefs;
     SharedPreferences.Editor editor;
     String outputFile, fileName, myUri, n, real, folderName, cTime = "", nts = "", splitter = "/////";
@@ -51,8 +50,9 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
     ArrayList<String> noteList;
     NoteListAdapter nla;
     NoteFragment noteFragment;
-    boolean fragmentVisible;
+    boolean fragmentVisible, recordingStarted;
     FragmentManager fragmentManager;
+    public static String nt = "";
 
 
     @Override
@@ -62,13 +62,11 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        start = (Button) findViewById(R.id.start);
-        stop = (Button) findViewById(R.id.stop);
+        start = (FloatingActionButton) findViewById(R.id.start);
         timer = (TextView) findViewById(R.id.timer);
         note = (ListView) findViewById(R.id.list);
         add = (FloatingActionButton) findViewById(R.id.fab);
         timer.setText("00:00");
-        stop.setEnabled(false);
         add.setEnabled(false);
         note.setEnabled(false);
 
@@ -79,12 +77,13 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
         myPrefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
         editor = myPrefs.edit();
         fragmentVisible = false;
+        recordingStarted = false;
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
         File folder = new File(Environment.getExternalStorageDirectory() +
-                File.separator + "Audio Note Pro" + File.separator + "Recordings");
+                File.separator + "Audio Note" + File.separator + "Recordings");
         if (!folder.exists()) {
             folder.mkdirs();
         }
@@ -103,45 +102,40 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    mediaRecorder.prepare();
-                    mediaRecorder.start();
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (!recordingStarted) {
+                    start.setImageResource(android.R.drawable.progress_horizontal);
+                    recordingStarted = true;
+                    try {
+                        mediaRecorder.prepare();
+                        mediaRecorder.start();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    note.setEnabled(true);
+                    add.setEnabled(true);
+                    startTime = SystemClock.uptimeMillis();
+                    myHandler.postDelayed(UpdateRecordingTime, 100);
                 }
-                start.setEnabled(false);
-                stop.setEnabled(true);
-                note.setEnabled(true);
-                add.setEnabled(true);
-                startTime = SystemClock.uptimeMillis();
-                myHandler.postDelayed(UpdateRecordingTime, 100);
-            }
-        });
-
-        stop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mediaRecorder.stop();
-                mediaRecorder.release();
-                mediaRecorder  = null;
-                stop.setEnabled(false);
-                start.setEnabled(true);
-                timeSwapBuff += timeInMilliseconds;
-                myHandler.removeCallbacks(UpdateRecordingTime);
-
-                save();
+                else
+                {
+                    mediaRecorder.stop();
+                    mediaRecorder.release();
+                    mediaRecorder  = null;
+                    timeSwapBuff += timeInMilliseconds;
+                    myHandler.removeCallbacks(UpdateRecordingTime);
+                    save();
+                }
             }
         });
 
         add.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View arg0) {
                 if(!fragmentVisible)
                 {
-                    YoutubeActivity.nt = "";
+                    nt = "";
                     cTime = timer.getText().toString()+": ";
                     showFragment();
                 }
@@ -154,20 +148,20 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
 
         note.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final String temp = noteList.get(position);
                 AlertDialog.Builder builder = new AlertDialog.Builder(RecordAudio.this);
                 builder.setItems(new String[]{"Edit", "Delete"}, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String s = noteList.get(position);
                         if(which == 0)
                         {
-                            nts = s;
-                            edit(s);
+                            nts = temp;
+                            edit(nts);
                         }
-                        else{
-
-                            delete(s);
+                        else
+                        {
+                            delete(temp);
                         }
                     }
                 });
@@ -175,33 +169,21 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
                 return true;
             }
         });
-
     }
 
-    /**
-     * Edits the note
-     * @param s - The note
-     */
     private void edit(String s)
     {
-        YoutubeActivity.nt = s.substring(s.indexOf(" ") + 1);
+        nt = s.substring(s.indexOf(" ") + 1);
         cTime = s.substring(0, s.indexOf(" ")+1);
         showFragment();
     }
 
-    /**
-     * Deletes the note
-     * @param s - The note
-     */
     private void delete(String s)
     {
         noteList.remove(s);
         updateList();
     }
 
-    /**
-     * Saves the recording
-     */
     private void save() {
         editor.putInt("recordingsInt", myPrefs.getInt("recordingsInt", 1) + 1);
         editor.apply();
@@ -218,41 +200,43 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
         editor.putString(fileName, myUri);
         editor.apply();
         Toast.makeText(this, "Recording Saved!", Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(RecordAudio.this, MainActivity.class);
-        startActivity(intent);
+        finish();
     }
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(false);
-        builder.setTitle("WARNING");
-        builder.setMessage("You will lose this recording. Do you want to continue?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //if user pressed "yes", then he is allowed to exit from application
-                File f = new File(outputFile);
-                f.delete();
-                editor.remove(myUri);
-                editor.apply();
-                finish();
-            }
-        });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //if user select "No", just cancel this dialog and continue with app
-                dialog.cancel();
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
+        if(fragmentVisible)
+        {
+            hideFragment();
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setCancelable(false);
+            builder.setTitle("WARNING");
+            builder.setMessage("You will lose this recording. Do you want to continue?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //if user pressed "yes", then he is allowed to exit from application
+                    File f = new File(outputFile);
+                    f.delete();
+                    editor.remove(myUri);
+                    editor.apply();
+                    finish();
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //if user select "No", just cancel this dialog and continue with app
+                    dialog.cancel();
+                }
+            });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
     }
 
-    /**
-     * Timer of the recording
-     */
     private Runnable UpdateRecordingTime = new Runnable() {
         public void run() {
             timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
@@ -278,12 +262,8 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
         hideFragment();
     }
 
-    /**
-     * Saves the note
-     * @param n - The note
-     */
     private void saveNote(String n) {
-        if(YoutubeActivity.nt.equals("")) {
+        if(nt.equals("")) {
             noteList.add(n);
         }
         else
@@ -294,9 +274,6 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
         updateList();
     }
 
-    /**
-     * Updates the list
-     */
     private void updateList() {
         Collections.sort((List) noteList);
         String temp = "";
@@ -309,9 +286,6 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
         note.setAdapter(nla);
     }
 
-    /**
-     * Hides the fragment
-     */
     private void hideFragment() {
         if(fragmentVisible)
         {
@@ -323,9 +297,6 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
         }
     }
 
-    /**
-     * Shows the fragment
-     */
     private void showFragment() {
         if(!fragmentVisible)
         {
@@ -398,7 +369,7 @@ public class RecordAudio extends AppCompatActivity implements NoteFragment.OnCli
             TextView ts = (TextView) v.findViewById(R.id.timeStamp);
             String temp = s.get(pos);
             String n = temp.substring(temp.indexOf(" ") + 1);
-            String t = temp.substring(0, temp.indexOf(" "));
+            String t = temp.substring(0, temp.indexOf(": "));
             ts.setText(t);
             lbl.setText(n);
 

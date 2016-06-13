@@ -30,20 +30,16 @@
             android:layout_marginRight="10dp" />
 
         <Button
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:background="@mipmap/correct"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
             android:id="@+id/ok"
-            android:layout_above="@+id/close"
-            android:layout_marginRight="5dp"
+            android:backgroundTintMode="multiply"
+            android:backgroundTint="#d1f0a8"
+            android:layout_alignTop="@+id/input"
             android:layout_toRightOf="@+id/input"
             android:layout_toEndOf="@+id/input"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="2dp"
-            android:backgroundTintMode="multiply"
-            android:backgroundTint="#d1f0a8" />
+            android:layout_marginLeft="5dp" />
 
         <Button
             android:layout_width="50dp"

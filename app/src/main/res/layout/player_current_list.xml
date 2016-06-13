@@ -9,33 +9,39 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#eaae22">
+        android:layout_weight="0.01"
+        android:background="#f6eddd">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="999:59"
+            android:id="@+id/timeStamp"
+            android:textSize="18dp"
+            android:textColor="#fff"
+            android:background="#5E9EC9"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignBottom="@+id/note"
+            android:textStyle="bold|italic"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:id="@+id/note"
             android:textSize="18dp"
             android:textColor="#000"
-            android:layout_marginRight="5dp"
-            android:layout_marginLeft="5dp"
+            android:background="#8deaae22"
+            android:paddingLeft="5dp"
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/timeStamp"
-            android:layout_toEndOf="@+id/timeStamp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"/>
+            android:paddingBottom="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/timeStamp"
-            android:textSize="18dp"
-            android:textColor="#000"
-            android:layout_marginLeft="5dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="10dp"/>
     </RelativeLayout>
 
 </LinearLayout>

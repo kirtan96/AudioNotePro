@@ -375,7 +375,7 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
         {
             if(export())
             {
-                Toast.makeText(YoutubeActivity.this, "Exported Successfully to 'My Files/Audio Note/Notes/'", Toast.LENGTH_LONG).show();
+                Toast.makeText(YoutubeActivity.this, "Exported Successfully to 'My Files/Audio Note Pro/Notes/'", Toast.LENGTH_LONG).show();
             }
             else
             {
@@ -502,5 +502,16 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
         sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportedFile));
         sharingIntent.putExtra(Intent.EXTRA_TEXT, "www.youtube.com/watch?v="+videoId);
         startActivity(Intent.createChooser(sharingIntent, "Share audio and notes via"));
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(fragmentVisible)
+        {
+            hideFragment();
+        }
+        else {
+            finish();
+        }
     }
 }
