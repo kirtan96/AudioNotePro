@@ -127,7 +127,7 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
         ytnList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String temp = noteList.get(position).substring(0, noteList.get(position).indexOf(" "));
+                String temp = noteList.get(position).substring(0, noteList.get(position).indexOf(": "));
                 playFrom(temp);
             }
         });
@@ -190,8 +190,8 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
      * @param temp - The time stamp
      */
     private void playFrom(String temp) {
-        int min = Integer.parseInt(temp.substring(0,2));
-        int sec = Integer.parseInt(temp.substring(3,5));
+        int min = Integer.parseInt(temp.substring(0, temp.indexOf(":")));
+        int sec = Integer.parseInt(temp.substring(temp.indexOf(":")+1));
         int t = (int) (TimeUnit.MINUTES.toMillis(min) + TimeUnit.SECONDS.toMillis(sec));
         youTubePlayer.seekToMillis(t);
         if(!youTubePlayer.isPlaying())
@@ -352,8 +352,8 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
             TextView lbl = (TextView) v.findViewById(R.id.note);
             TextView ts = (TextView) v.findViewById(R.id.timeStamp);
             String temp = s.get(pos);
-            String n = temp.substring(temp.indexOf(" ") + 1);
-            String t = temp.substring(0, temp.indexOf(" "));
+            String n = temp.substring(temp.indexOf(": ") + 2);
+            String t = temp.substring(0, temp.indexOf(": "));
             ts.setText(t);
             lbl.setText(n);
 

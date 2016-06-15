@@ -367,8 +367,8 @@ public class YoutubeResult extends YouTubeBaseActivity implements NoteFragment.O
             TextView lbl = (TextView) v.findViewById(R.id.note);
             TextView ts = (TextView) v.findViewById(R.id.timeStamp);
             String temp = s.get(pos);
-            String n = temp.substring(temp.indexOf(" ") + 1);
-            String t = temp.substring(0, temp.indexOf(" "));
+            String n = temp.substring(temp.indexOf(": ") + 2);
+            String t = temp.substring(0, temp.indexOf(": "));
             ts.setText(t);
             lbl.setText(n);
 
