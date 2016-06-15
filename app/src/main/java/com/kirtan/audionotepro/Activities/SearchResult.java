@@ -14,7 +14,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -23,6 +22,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kirtan.audionotepro.Fragments.AudioNoteFragment;
 import com.kirtan.audionotepro.R;
@@ -285,10 +285,9 @@ public class SearchResult extends AppCompatActivity implements AudioNoteFragment
             );
 
             myHandler.postDelayed(UpdateSongTime, 100);
-            Log.d("Test Worked", "Music is Playing");
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.d("Test Failed", "Music was not played");
+            Toast.makeText(this, "It seems like the audio file no longer exists on your device!",Toast.LENGTH_LONG).show();
+            finish();
         }
 
         note.setOnItemClickListener(new AdapterView.OnItemClickListener() {
