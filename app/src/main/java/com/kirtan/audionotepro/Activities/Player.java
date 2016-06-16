@@ -151,7 +151,7 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
             myHandler.postDelayed(UpdateSongTime, 100);
         }
         catch (IOException e) {
-            Toast.makeText(this, "It seems like the audio file no longer exists on your device! But the notes are successfully exported to your device!",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "It seems like the audio file no longer exists on your device or is moved from its previous location! But the notes are successfully exported to your device!",Toast.LENGTH_LONG).show();
             export();
             finish();
         }
