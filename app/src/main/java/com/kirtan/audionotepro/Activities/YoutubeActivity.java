@@ -219,7 +219,8 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
     private void hideFragment() {
         if(fragmentVisible)
         {
-            fragmentManager.beginTransaction()
+            fragmentManager.beginTransaction().
+                    setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
                     .remove(noteFragment)
                     .commit();
             fragmentVisible = false;
@@ -241,6 +242,7 @@ public class YoutubeActivity extends YouTubeBaseActivity implements NoteFragment
             fragmentManager = getFragmentManager();
             noteFragment = new NoteFragment();
             fragmentManager.beginTransaction().
+                    setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).
                     add(R.id.ytlayout, noteFragment).
                     commit();
             fragmentVisible = true;

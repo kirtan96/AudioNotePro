@@ -475,7 +475,8 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
     private void hideFragment() {
         if(fragmentVisible)
         {
-            fragmentManager.beginTransaction()
+            fragmentManager.beginTransaction().
+                    setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
                     .remove(audioNoteFragment)
                     .commit();
             fragmentVisible = false;
@@ -491,6 +492,7 @@ public class Player extends AppCompatActivity implements AudioNoteFragment.OnCli
             fragmentManager = getFragmentManager();
             audioNoteFragment = new AudioNoteFragment();
             fragmentManager.beginTransaction().
+                    setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).
                     add(R.id.playerLayout, audioNoteFragment).
                     commit();
             fragmentVisible = true;

@@ -508,8 +508,9 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnC
         google.setVisibility(View.VISIBLE);
         add.show();
         search.setVisibility(View.VISIBLE);
-        fragmentManager.beginTransaction()
-                .remove(loginFragment)
+        fragmentManager.beginTransaction().
+                setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).
+                remove(loginFragment)
                 .commit();
     }
 
@@ -521,6 +522,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnC
         fragmentManager = getFragmentManager();
         loginFragment = new LoginFragment();
         fragmentManager.beginTransaction().
+                setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).
                 add(R.id.mainLayout, loginFragment).
                 commit();
     }
