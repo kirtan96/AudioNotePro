@@ -8,7 +8,7 @@
     android:background="#F9F9E2"
     android:id="@+id/ytlayout">
 
-    <Toolbar
+    <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -20,7 +20,7 @@
             android:id="@+id/shareButton"
             android:src="@android:drawable/ic_menu_share"
             android:layout_gravity="top|end"/>
-    </Toolbar>
+    </android.support.v7.widget.Toolbar>
 
     <com.google.android.youtube.player.YouTubePlayerView
         android:layout_width="match_parent"

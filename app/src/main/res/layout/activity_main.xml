@@ -20,6 +20,14 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"
             >
             <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/google_button"
+                android:background="@drawable/common_google_signin_btn_icon_dark_focused"
+                android:layout_gravity="top|start"
+                android:layout_marginRight="30dp"
+                />
+            <Button
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:id="@+id/search_button"

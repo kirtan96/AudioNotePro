@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1014839766664",
+    "firebase_url": "https://audio-note-pro.firebaseio.com",
+    "project_id": "audio-note-pro",
+    "storage_bucket": "audio-note-pro.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1014839766664:android:aa41fd8394fd0326",
+        "android_client_info": {
+          "package_name": "com.kirtan.audionotepro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1014839766664-b9o9d4bf715jmmj11carfifkd2gi2grs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYm1o_tT1dQlkdTL0AgRbEMaF38QGK3lA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

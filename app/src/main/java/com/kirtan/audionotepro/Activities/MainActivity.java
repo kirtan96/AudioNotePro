@@ -2,6 +2,7 @@ package com.kirtan.audionotepro.Activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -24,9 +26,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.kirtan.audionotepro.Fragments.LoginFragment;
 import com.kirtan.audionotepro.R;
 
 import java.util.ArrayList;
@@ -34,7 +38,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoginFragment.OnClickedListener{
 
 
     ListView note;
@@ -43,17 +47,21 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     ImageView back;
     TextView title;
-    Button search;
+    Button search, google;
     FileAdapter adp;
     boolean isFolderOpen;
     int readCheck, writeCheck, recordCheck, internetCheck;
     public View row;
     ArrayList<String> folderLists, fileLists, recordLists, youTubeLists, noteList;
-
+    private FragmentManager fragmentManager;
+    private LoginFragment loginFragment;
     final String MY_FILES = "myFiles",
             MY_FOLDERS = "myFolders",
             MY_YOUTUBE_FILES = "myYouTubeFiles",
             MY_YOUTUBE_URLS = "myYouTubeURLS";
+    FloatingActionButton add;
+    RelativeLayout relativeLayout;
+    float x1,y1,x2,y2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        FloatingActionButton add = (FloatingActionButton) findViewById(R.id.fab);
+        add = (FloatingActionButton) findViewById(R.id.fab);
         setTitle("All Notes");
 
 
@@ -92,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
         back = (ImageView) findViewById(R.id.back);
         back.setVisibility(View.INVISIBLE);
         note = (ListView) findViewById(R.id.listView2);
+        google = (Button) findViewById(R.id.google_button);
+        relativeLayout = (RelativeLayout) findViewById(R.id.mainLayout);
         myPrefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
         editor = myPrefs.edit();
         title = (TextView) findViewById(R.id.title);
@@ -452,6 +462,67 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         update();
+
+        google.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFragment();
+            }
+        });
+
+        relativeLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent touchevent) {
+                switch (touchevent.getAction())
+                {
+                    // when user first touches the screen we get x and y coordinate
+                    case MotionEvent.ACTION_DOWN:
+                    {
+                        x1 = touchevent.getX();
+                        y1 = touchevent.getY();
+                    }
+                    case MotionEvent.ACTION_UP:
+                    {
+                        x2 = touchevent.getX();
+                        y2 = touchevent.getY();
+
+                        if (x1 < x2)
+                        {
+                            showFragment();
+                        }
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
+
+    }
+
+    @Override
+    public void onCloseClicked() {
+        hideFragment();
+    }
+
+    private void hideFragment() {
+        google.setVisibility(View.VISIBLE);
+        add.show();
+        search.setVisibility(View.VISIBLE);
+        fragmentManager.beginTransaction()
+                .remove(loginFragment)
+                .commit();
+    }
+
+    private void showFragment() {
+        google.setVisibility(View.INVISIBLE);
+        add.setVisibility(View.INVISIBLE);
+        search.setVisibility(View.INVISIBLE);
+        add.hide();
+        fragmentManager = getFragmentManager();
+        loginFragment = new LoginFragment();
+        fragmentManager.beginTransaction().
+                add(R.id.mainLayout, loginFragment).
+                commit();
     }
 
     private boolean checkEveryVideoIds(String videoId) {
@@ -1082,6 +1153,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+
     /**
      * Private Class for listView
      */
@@ -1154,12 +1228,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(title.getVisibility() == View.VISIBLE)
+        if(google.getVisibility() == View.INVISIBLE)
         {
-            update();
+            hideFragment();
         }
         else {
-            finish();
+            if (title.getVisibility() == View.VISIBLE) {
+                update();
+            } else {
+                finish();
+            }
         }
     }
 
