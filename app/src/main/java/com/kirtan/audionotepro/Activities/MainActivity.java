@@ -30,7 +30,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.kirtan.audionotepro.Fragments.LoginFragment;
+import com.kirtan.audionotepro.Fragments.SignupFragment;
 import com.kirtan.audionotepro.R;
 
 import java.util.ArrayList;
@@ -38,7 +40,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
-public class MainActivity extends AppCompatActivity implements LoginFragment.OnClickedListener{
+public class MainActivity extends AppCompatActivity implements LoginFragment.OnClickedListener,
+        SignupFragment.OnClickedListener{
 
 
     ListView note;
@@ -47,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnC
     SharedPreferences.Editor editor;
     ImageView back;
     TextView title;
-    Button search, google;
+    Button search, menu;
     FileAdapter adp;
     boolean isFolderOpen;
     int readCheck, writeCheck, recordCheck, internetCheck;
@@ -55,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnC
     ArrayList<String> folderLists, fileLists, recordLists, youTubeLists, noteList;
     private FragmentManager fragmentManager;
     private LoginFragment loginFragment;
+    private SignupFragment signupFragment;
     final String MY_FILES = "myFiles",
             MY_FOLDERS = "myFolders",
             MY_YOUTUBE_FILES = "myYouTubeFiles",
@@ -62,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnC
     FloatingActionButton add;
     RelativeLayout relativeLayout;
     float x1,y1,x2,y2;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,13 +105,21 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnC
         back = (ImageView) findViewById(R.id.back);
         back.setVisibility(View.INVISIBLE);
         note = (ListView) findViewById(R.id.listView2);
-        google = (Button) findViewById(R.id.google_button);
+        menu = (Button) findViewById(R.id.menu_button);
         relativeLayout = (RelativeLayout) findViewById(R.id.mainLayout);
         myPrefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
         editor = myPrefs.edit();
         title = (TextView) findViewById(R.id.title);
         title.setVisibility(View.INVISIBLE);
         isFolderOpen = false;
+
+        mAuth = FirebaseAuth.getInstance();
+        if(mAuth.getCurrentUser() != null){
+            menu.setText("Sign Out");
+        }
+        else{
+            menu.setText("Log In");
+        }
 
         assert add != null;
         add.setOnClickListener(new View.OnClickListener() {
@@ -463,7 +476,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnC
         });
         update();
 
-        google.setOnClickListener(new View.OnClickListener() {
+        menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showFragment();
@@ -504,8 +517,36 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnC
         hideFragment();
     }
 
+    @Override
+    public void onSignUpClicked() {
+        fragmentManager.beginTransaction().
+                setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).
+                remove(loginFragment).commit();
+        signupFragment = new SignupFragment();
+        fragmentManager.beginTransaction().
+                setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).
+                add(R.id.mainLayout, signupFragment).
+                commit();
+    }
+
+    @Override
+    public void onSignupCloseClicked() {
+        menu.setVisibility(View.VISIBLE);
+        add.show();
+        search.setVisibility(View.VISIBLE);
+        fragmentManager.beginTransaction().
+                setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).
+                remove(signupFragment)
+                .commitAllowingStateLoss();
+    }
+
+    @Override
+    public void onSignupSuccess(){
+        onSignupCloseClicked();
+    }
+
     private void hideFragment() {
-        google.setVisibility(View.VISIBLE);
+        menu.setVisibility(View.VISIBLE);
         add.show();
         search.setVisibility(View.VISIBLE);
         fragmentManager.beginTransaction().
@@ -515,8 +556,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnC
     }
 
     private void showFragment() {
-        google.setVisibility(View.INVISIBLE);
-        add.setVisibility(View.INVISIBLE);
+        menu.setVisibility(View.INVISIBLE);
         search.setVisibility(View.INVISIBLE);
         add.hide();
         fragmentManager = getFragmentManager();
@@ -1156,8 +1196,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnC
     }
 
 
-
-
     /**
      * Private Class for listView
      */
@@ -1230,9 +1268,16 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnC
 
     @Override
     public void onBackPressed() {
-        if(google.getVisibility() == View.INVISIBLE)
+        if(menu.getVisibility() == View.INVISIBLE)
         {
             hideFragment();
+            menu.setVisibility(View.VISIBLE);
+            add.show();
+            search.setVisibility(View.VISIBLE);
+            fragmentManager.beginTransaction().
+                    setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).
+                    remove(signupFragment)
+                    .commit();
         }
         else {
             if (title.getVisibility() == View.VISIBLE) {

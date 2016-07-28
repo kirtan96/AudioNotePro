@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.LoginFragment"
+    tools:context=".Fragments.SignupFragment"
     android:focusable="false"
     android:background="#b1000000"
-    android:id="@+id/googleLayout">
+    android:id="@+id/signupLayout">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -20,12 +20,12 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sign in"
-            android:background="@drawable/common_google_signin_btn_text_dark"
+            android:text="Sign Up"
+            android:background="#FF3272F2"
             android:textColor="#fff"
+            android:id="@+id/login"
             android:layout_below="@+id/password"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/signin" />
+            android:layout_centerHorizontal="true" />
 
         <EditText
             android:layout_width="wrap_content"
@@ -33,13 +33,11 @@
             android:inputType="textEmailAddress"
             android:ems="10"
             android:id="@+id/email"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="77dp"
             android:textColor="#000"
             android:hint="E-mail"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
+            android:layout_below="@+id/lastName"
+            android:layout_alignLeft="@+id/lastName"
+            android:layout_alignStart="@+id/lastName"
             android:layout_marginBottom="5dp" />
 
         <EditText
@@ -48,11 +46,34 @@
             android:inputType="textPassword"
             android:ems="10"
             android:id="@+id/password"
+            android:textColor="#000"
+            android:hint="Password"
             android:layout_below="@+id/email"
             android:layout_alignLeft="@+id/email"
             android:layout_alignStart="@+id/email"
-            android:textColor="#000"
-            android:hint="Password"
             android:layout_marginBottom="5dp" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/lastName"
+            android:hint="Last Name"
+            android:layout_below="@+id/firstName"
+            android:layout_alignLeft="@+id/firstName"
+            android:layout_alignStart="@+id/firstName"
+            android:layout_marginBottom="5dp" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/firstName"
+            android:hint="First Name"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="5dp" />
+
     </RelativeLayout>
 </RelativeLayout>

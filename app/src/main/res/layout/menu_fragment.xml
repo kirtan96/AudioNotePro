@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.SignupFragment"
+    android:focusable="false"
+    android:background="#b1000000"
+    android:id="@+id/menuLayout">
+
+    <RelativeLayout
+        android:layout_width="220dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:background="#f8f8ec">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Log In"
+            android:background="#FF3272F2"
+            android:textColor="#fff"
+            android:id="@+id/login"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Audio Files"
+            android:id="@+id/odaudioFiles"
+            android:textStyle="bold"
+            android:textColor="#fff"
+            android:textSize="18dp"
+            android:background="@color/accent_material_dark"
+            android:paddingRight="11dp"
+            android:paddingLeft="11dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_below="@+id/odallfiles"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/odrecordings"
+            android:text="Recordings"
+            android:textStyle="bold"
+            android:textColor="#fff"
+            android:textSize="18dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            android:background="@android:color/holo_blue_dark"
+            android:paddingTop="10dp"
+            android:layout_below="@+id/odaudioFiles"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/odyoutube"
+            android:text="YouTube"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:textColor="#fff"
+            android:padding="10dp"
+            android:background="#f93131"
+            android:layout_below="@+id/odrecordings"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="On Cloud"
+            android:id="@+id/oncloud"
+            android:textStyle="normal|bold|italic"
+            android:textColor="#fff"
+            android:background="@color/bright_foreground_disabled_material_light"
+            android:textSize="15dp"
+            android:textAlignment="center"
+            android:layout_below="@+id/odyoutube"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="On Device"
+            android:id="@+id/textView3"
+            android:textSize="15dp"
+            android:background="@color/bright_foreground_disabled_material_light"
+            android:textColor="#fff"
+            android:textAlignment="center"
+            android:textStyle="normal|bold|italic"
+            android:layout_below="@+id/login"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Audio Files"
+            android:id="@+id/caudiofiles"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:textColor="#fff"
+            android:background="@color/accent_material_dark"
+            android:paddingLeft="11dp"
+            android:paddingTop="10dp"
+            android:paddingRight="11dp"
+            android:paddingBottom="10dp"
+            android:layout_marginTop="42dp"
+            android:layout_below="@+id/oncloud"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Recordings"
+            android:id="@+id/crecordings"
+            android:padding="10dp"
+            android:textColor="#fff"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:background="@android:color/holo_blue_dark"
+            android:layout_below="@+id/caudiofiles"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="YouTube"
+            android:id="@+id/cyoutube"
+            android:layout_below="@+id/crecordings"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:background="#f93131"
+            android:padding="10dp"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:textColor="#fff"
+            android:layout_alignRight="@+id/crecordings"
+            android:layout_alignEnd="@+id/crecordings"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="All Files"
+            android:id="@+id/odallfiles"
+            android:background="@android:color/holo_orange_light"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:textColor="#fff"
+            android:padding="10dp"
+            android:layout_below="@+id/textView3"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="All Files"
+            android:id="@+id/callfiles"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:textColor="#fff"
+            android:background="@android:color/holo_orange_light"
+            android:padding="10dp"
+            android:layout_below="@+id/oncloud"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+    </RelativeLayout>
+</RelativeLayout>
